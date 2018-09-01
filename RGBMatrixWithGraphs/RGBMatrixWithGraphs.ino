@@ -204,22 +204,26 @@ void draw_weather_icon (uint8_t icon)
 
 int dataPoints[7] = {4, 7, 9, 2, 12, 5, 1};
 
-void drawBarGraph(int x, int y, int width, int height, int data[], int dataSize, uint16_t colour){
+void autoDrawBarGraph(int x, int y, int width, int height, int data[], int dataSize, uint16_t colour) {
   int barWidth = 1;
-  while(((4*barWidth)/3)*dataSize + barWidth/3 < width){
+  while(((4*barWidth)/3)*dataSize < width){
     //Serial.println(((4*barWidth)/3)*numDataPoints + barWidth/3);
     barWidth++;
   }
 
   barWidth = barWidth - 1;
 
-  int maxValue = data[0];
-  for(int i = 1; i < dataSize; i++){
-    if(maxValue < data[i]){
-      maxValue = data[i];
-    }
-  }
+  int maxValue = getMaxValue(data, dataSize);
 
+  int multiplier = 1;
+  int actualChartHeight = getActualChartHeight(height, maxValue);
+
+  int gapWidth = barWidth/3;
+
+  drawBarGraph(x, y, width, height, data, dataSize, colour, barWidth, gapWidth, actualChartHeight, maxValue);
+}
+
+int getActualChartHeight(int height, int maxValue){
   int multiplier = 1;
   int actualChartHeight = height;
   if(maxValue < height){
@@ -236,13 +240,24 @@ void drawBarGraph(int x, int y, int width, int height, int data[], int dataSize,
     actualChartHeight = maxValue/multiplier; 
   }
 
+  return actualChartHeight;
+}
 
+int getMaxValue(int data[], int dataSize){
+  int maxValue = data[0];
+  for(int i = 1; i < dataSize; i++){
+    if(maxValue < data[i]){
+      maxValue = data[i];
+    }
+  }
 
-  //int barHeight = map(dataPoints[i], 0, maxValue, 0, height);
+  return maxValue;
+}
+
+void drawBarGraph(int x, int y, int width, int height, int data[], int dataSize, uint16_t colour, int barWidth, int gapWidth, int actualChartHeight, int maxValue){
   
-  int gapWidth = barWidth/3;
   for(int i = 0; i < dataSize; i++){
-    int barX = x + gapWidth + ((gapWidth + barWidth) * i);
+    int barX = x + ((gapWidth + barWidth) * i);
     int barHeight = map(data[i], 0, maxValue, 0, actualChartHeight);
     int barY = y- barHeight;
     //int barY = y - (dataPoints[i] * multiplier);
@@ -258,34 +273,44 @@ int dataSet1[] = {4, 7, 9, 2, 12, 5, 1};
 int dataSet1Size = 7;
 int dataSet2[] = {20, 34, 60, 26};
 int dataSet2Size = 4;
+int dataSet3[] = {30, 24, 50, 13};
+int dataSet3Size = 4;
 void loop() {
 
   display.clearDisplay();
-  drawBarGraph(2, 30, 62, 30, dataSet1, dataSet1Size, myBLUE);
+
+  int actualHeight = getActualChartHeight(30, 60);
+  drawBarGraph(4, 31, 62, 30, dataSet2, dataSet2Size, myBLUE, 6, 8, actualHeight, 60);
+  drawBarGraph(11, 31, 62, 30, dataSet3, dataSet3Size, myGREEN, 6, 8, actualHeight, 60);
+  //drawBarGraph(2, 30, 62, 30, dataSet2, dataSet2Size, myBLUE, 4, 7, 60);
+
+  delay(8000);
+  display.clearDisplay();
+  autoDrawBarGraph(2, 30, 62, 30, dataSet1, dataSet1Size, myBLUE);
   
   delay(4000);
   
   display.clearDisplay();
-  drawBarGraph(2, 30, 62, 30, dataSet2, dataSet2Size, myGREEN);
+  autoDrawBarGraph(2, 30, 62, 30, dataSet2, dataSet2Size, myGREEN);
   
   delay(4000);
   
   display.clearDisplay();
-  drawBarGraph(2, 30, 20, 30, dataSet1, dataSet1Size, myRED);
+  autoDrawBarGraph(2, 30, 20, 30, dataSet1, dataSet1Size, myRED);
   
   delay(4000);
   
   display.clearDisplay();
-  drawBarGraph(2, 30, 30, 20, dataSet1, dataSet1Size, myBLUE);
-  drawBarGraph(32, 30, 30, 20, dataSet1, dataSet1Size, myGREEN);
+  autoDrawBarGraph(2, 30, 30, 20, dataSet1, dataSet1Size, myBLUE);
+  autoDrawBarGraph(32, 30, 30, 20, dataSet1, dataSet1Size, myGREEN);
   
   delay(4000);
   
   display.clearDisplay();
-  drawBarGraph(2, 16, 30, 15, dataSet1, dataSet1Size, myRED);
-  drawBarGraph(31, 16, 30, 15, dataSet1, dataSet1Size, myBLUE);
-  drawBarGraph(2, 30, 30, 15, dataSet1, dataSet1Size, myGREEN);
-  drawBarGraph(31, 30, 30, 15, dataSet1, dataSet1Size, myMAGENTA);
+  autoDrawBarGraph(2, 16, 30, 15, dataSet1, dataSet1Size, myRED);
+  autoDrawBarGraph(31, 16, 30, 15, dataSet1, dataSet1Size, myBLUE);
+  autoDrawBarGraph(2, 30, 30, 15, dataSet1, dataSet1Size, myGREEN);
+  autoDrawBarGraph(31, 30, 30, 15, dataSet1, dataSet1Size, myMAGENTA);
   
   delay(4000);
   
