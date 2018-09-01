@@ -220,7 +220,7 @@ void autoDrawBarGraph(int x, int y, int width, int height, int data[], int dataS
 
   int gapWidth = barWidth/3;
 
-  drawBarGraph(x, y, width, height, data, dataSize, colour, barWidth, gapWidth, actualChartHeight, maxValue);
+  drawBarGraph(x, y, data, dataSize, colour, barWidth, gapWidth, actualChartHeight, maxValue);
 }
 
 int getActualChartHeight(int height, int maxValue){
@@ -254,7 +254,7 @@ int getMaxValue(int data[], int dataSize){
   return maxValue;
 }
 
-void drawBarGraph(int x, int y, int width, int height, int data[], int dataSize, uint16_t colour, int barWidth, int gapWidth, int actualChartHeight, int maxValue){
+void drawBarGraph(int x, int y, int data[], int dataSize, uint16_t colour, int barWidth, int gapWidth, int actualChartHeight, int maxValue){
   
   for(int i = 0; i < dataSize; i++){
     int barX = x + ((gapWidth + barWidth) * i);
@@ -280,8 +280,8 @@ void loop() {
   display.clearDisplay();
 
   int actualHeight = getActualChartHeight(30, 60);
-  drawBarGraph(4, 31, 62, 30, dataSet2, dataSet2Size, myBLUE, 6, 8, actualHeight, 60);
-  drawBarGraph(11, 31, 62, 30, dataSet3, dataSet3Size, myGREEN, 6, 8, actualHeight, 60);
+  drawBarGraph(4, 31, dataSet2, dataSet2Size, myBLUE, 6, 8, actualHeight, 60);
+  drawBarGraph(11, 31, dataSet3, dataSet3Size, myGREEN, 6, 8, actualHeight, 60);
   //drawBarGraph(2, 30, 62, 30, dataSet2, dataSet2Size, myBLUE, 4, 7, 60);
 
   delay(8000);
